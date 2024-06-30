@@ -1,8 +1,11 @@
 import psycopg2
+from db_config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
 from fetch_data import get_employer_data, get_vacancies
 
-
 def create_tables():
+    """
+    Create employers and vacancies tables in the database.
+    """
     commands = (
         """
         CREATE TABLE employers (
@@ -27,7 +30,13 @@ def create_tables():
 
     conn = None
     try:
-        conn = psycopg2.connect(database="hhdb", user="postgres", password="290102gg228")
+        conn = psycopg2.connect(
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
+            port=DB_PORT
+        )
         cur = conn.cursor()
         for command in commands:
             cur.execute(command)
@@ -39,11 +48,22 @@ def create_tables():
         if conn is not None:
             conn.close()
 
-
 def insert_data(employers, vacancies):
+    """
+    Insert data into the employers and vacancies tables.
+
+    :param employers: List of employers
+    :param vacancies: List of vacancies
+    """
     conn = None
     try:
-        conn = psycopg2.connect(database="hhdb", user="postgres", password="290102gg228")
+        conn = psycopg2.connect(
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
+            port=DB_PORT
+        )
         cur = conn.cursor()
 
         for employer in employers:
@@ -67,8 +87,10 @@ def insert_data(employers, vacancies):
         if conn is not None:
             conn.close()
 
-
-if __name__ == "__main__":
+def initialize_database():
+    """
+    Initialize the database by creating tables and inserting data.
+    """
     create_tables()
     employers = get_employer_data(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
     vacancies = get_vacancies(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
